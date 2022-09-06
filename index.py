@@ -1,27 +1,25 @@
 import json
-import urllib.request
 import random
+import requests
 
 fruits = ['apple', 'banana', 'cherry', 'avacado', 'blueberry']
 
-baseURL = 'http://jsonplaceholder.typicode.com/posts/'
+base_url = 'http://jsonplaceholder.typicode.com/posts/'
 
 
-def create_recipe(arr):
-    f = open('recipes.json', 'r+')
-    file_data = json.load(f)
-    for x in arr:
-        content = urllib.request.urlopen(
-            baseURL + str(random.randint(1, 10))).read()
-        y = json.loads(content)
-        recipe = {
-            'title': x,
-            'body': y['body']
-        }
-        file_data['recipes'].append(recipe)
-        f.seek(0)
-        json.dump(file_data, f, indent=4)
-    f.close()
+def create_recipe(ingredients):
+    with open('recipes.json', 'r') as file:
+        file_data = json.load(file)
+        for ingredient in ingredients:
+                content_response = requests.get(f"{base_url}{random.randint(1, 10)}")   
+                content = content_response.json()
+                recipe = {
+                    'title': ingredient,
+                    'body': content['body']
+                }
+                file_data['recipes'].append(recipe)
+    with open('recipes.json', "w") as fd:
+        json.dump(file_data, fd, indent=4)
 
 
 create_recipe(fruits)
